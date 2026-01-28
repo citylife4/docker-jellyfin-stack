@@ -83,13 +83,13 @@ Add Indexers: Go to Indexers and search the trackers you wanna add
 Connect Apps: Go to Settings > Apps > +
 
 Radarr:  
-- Prowlarr Server: http://<your-ip>:9696
-- Radarr Server: http://<your-ip>:7878  
+- Prowlarr Server: http://your-ip:9696
+- Radarr Server: http://your-ip:7878  
 - API Key: Get this from Radarr (Settings > General).
 
 Sonarr:  
-- Prowlarr Server: http://<your-ip>:9696
-- Sonarr Server: http://<your-ip>:8989  
+- Prowlarr Server: http://your-ip:9696
+- Sonarr Server: http://your-ip8989  
 - API Key: Get this from Sonarr (Settings > General).
 
 Click "Test" and "Save". This will automatically sync your indexers.
