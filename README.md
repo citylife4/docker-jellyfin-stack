@@ -37,15 +37,16 @@ Run the following command in your terminal inside the project folder:
 docker compose up -d
 ```
 Once started, you can access the services
-| Service       | Port  | URL (Example)             | Description                     |
+| Service       | Port  | URL (Example)             | Description |
 | :---          | :---  | :---                      | :---                            |
-| **qBittorrent**| 8080 | `http://<your-ip>:8080`   | Torrent Downloader              |
-| **Radarr** | 7878  | `http://<your-ip>:7878`   | Movie Management                |
-| **Sonarr** | 8989  | `http://<your-ip>:8989`   | TV Series Management            |
-| **Prowlarr** | 9696  | `http://<your-ip>:9696`   | Indexer/Tracker Proxy           |
-| **Jellyfin** | 8096  | `http://<your-ip>:8096`   | Media Server & Streaming        |
+| **qBittorrent**| 8080 | `http://<your-ip>:8080`   | Torrent Downloader |
+| **Radarr** | 7878  | `http://<your-ip>:7878`   | Movie Management |
+| **Sonarr** | 8989  | `http://<your-ip>:8989`   | TV Series Management |
+| **Prowlarr** | 9696  | `http://<your-ip>:9696`   | Indexer/Tracker Proxy |
+| **Unpackerr** ||| Extracts Radarr/Sonarr downloads|
+| **Jellyfin** | 8096  | `http://<your-ip>:8096`   | Media Server & Streaming |
 | **Homepage** | 3000  | `http://<your-ip>:3000`   | Main Dashboard |
-| **Glances** | 61208 | `http://<your-ip>:61208`  | System Monitoring               |
+| **Glances** | 61208 | `http://<your-ip>:61208`  | System Monitoring |
 ### 🌍 qBittorrent
 On the very first startup, qBittorrent generates a random temporary password. You need to check the container logs to find it.
 ```bash
@@ -89,10 +90,33 @@ Radarr:
 
 Sonarr:  
 - Prowlarr Server: http://your-ip:9696
-- Sonarr Server: http://your-ip8989  
+- Sonarr Server: http://your-ip:8989  
 - API Key: Get this from Sonarr (Settings > General).
 
 Click "Test" and "Save". This will automatically sync your indexers.
+
+#### Unpackerr
+Unpackerr is responsible for automatically extracting compressed files (.zip, .rar, .7zip...) downloaded by qBitorrent so Radarr and Sonarr can import them.  
+To make Unpackerr work, you must link it with Radarr and Sonarr using your API Keys.
+
+Open your .env file and add your keys from the web settings (Settings > General) of each app:
+```text
+RADARR_API_KEY= your_key_here  
+SONARR_API_KEY= your_key_here
+```
+After saving the file, you must run the following command to refresh the configuration:
+```bash
+docker compose up -d
+```
+To check if Unpackerr is working and connected to Radarr/Sonarr run:
+```bash
+docker compose logs unpackerr
+```
+It should look something like this:
+```text
+[Radarr] Updated (http://radarr:7878): 0 Items Queued, 0 Retrieved
+[Sonarr] Updated (http://sonarr:8989): 0 Items Queued, 0 Retrieved
+```
 ### 🪼 Jellyfin
 Follow the instructions in the initial setup.
 
