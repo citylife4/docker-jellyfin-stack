@@ -10,14 +10,14 @@ This repository contains a docker-compose configuration for a fully automated ho
 ## 📂 Directory Structure & Architecture
 To ensure optimal performance and avoid storage duplication, this project relies on a specific folder hierarchy.
 
-Run the following command to generate the required directory tree:
+Run the following command on your **external disk mount** to generate the required directory tree:
 
 ```bash
-mkdir -p data/{media/{movies,series},torrents}
+mkdir -p /mnt/external-disk/jellyfin-stack/data/{media/{movies,series},torrents}
 ```
 
 ```text
-├── data
+├── /mnt/external-disk/jellyfin-stack/data
     ├── media
     │   ├── movies
     │   └── series
@@ -30,6 +30,7 @@ Locate the .env.example file in the root directory. Create a copy of this file a
 cp .env.example .env
 ```
 Open the new .env file and fill in the required values (API keys, database credentials, specific ports, etc.).
+Set `DATA_DIR` and `DOWNLOAD_DIR` to your external disk path so all media/movies/series/torrents live on that disk.
 
 ## 🛠️ Installation & Usage
 Run the following command in your terminal inside the project folder:
@@ -42,6 +43,7 @@ Once started, you can access the services
 | **qBittorrent**| 8080 | `http://<your-ip>:8080`   | Torrent Downloader |
 | **Radarr** | 7878  | `http://<your-ip>:7878`   | Movie Management |
 | **Sonarr** | 8989  | `http://<your-ip>:8989`   | TV Series Management |
+| **Bazarr** | 6767  | `http://<your-ip>:6767`   | Subtitle Management |
 | **Prowlarr** | 9696  | `http://<your-ip>:9696`   | Indexer/Tracker Proxy |
 | **Unpackerr** ||| Extracts Radarr/Sonarr downloads|
 | **Jellyfin** | 8096  | `http://<your-ip>:8096`   | Media Server & Streaming |
@@ -94,6 +96,21 @@ Sonarr:
 - API Key: Get this from Sonarr (Settings > General).
 
 Click "Test" and "Save". This will automatically sync your indexers.
+
+#### Bazarr
+Bazarr handles subtitle downloads and sync.
+
+Connect applications from Bazarr:
+- Settings > Sonarr > Add Sonarr:
+  - Address: `http://sonarr:8989`
+  - API Key: from Sonarr (Settings > General)
+  - Root folders in container: `/data/media/series`
+- Settings > Radarr > Add Radarr:
+  - Address: `http://radarr:7878`
+  - API Key: from Radarr (Settings > General)
+  - Root folders in container: `/data/media/movies`
+
+After saving, Bazarr will scan your existing media and fetch subtitles based on your language/profile settings.
 
 #### Unpackerr
 Unpackerr is responsible for automatically extracting compressed files (.zip, .rar, .7zip...) downloaded by qBitorrent so Radarr and Sonarr can import them.  
